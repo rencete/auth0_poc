@@ -1,0 +1,30 @@
+{% extends "core/sidebar.html" %}
+{% block content %}
+    <section class="mb-4">
+        {% if user.is_authenticated %}
+            <div class="card">
+                <div class="card-header">Main Page</div>
+                <div class="card-body">
+                    <h5 class="card-title">User is Authenticated</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">User information</h6>
+                    <p class="card-text">TBD</p>
+                    <a href="{% url 'auth0:logout' %}" class="btn btn-primary">Logout</a>
+                </div>
+            </div>
+        {% else %}
+            <div class="card">
+                <div class="card-header">Main Page</div>
+                <div class="card-body">
+                    <h5 class="card-title">User is NOT Authenticated</h5>
+                    <p class="card-text">Select one of the options below to login or register to the site.</p>
+                    <p>
+                        <a href="#" class="card-link">Universal Login</a>
+                    </p>
+                    <p>
+                        <a href="#" class="card-link">link 2</a>
+                    </p>
+                </div>
+            </div>
+        {% endif %}
+    </section>
+{% endblock content %}
