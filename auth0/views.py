@@ -6,6 +6,10 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login as auth_login
 from urllib.parse import quote_plus, urlencode
 
+import http.client
+import json
+import urllib
+
 
 oauth = OAuth()
 
@@ -57,3 +61,32 @@ def logout(request):
             quote_via=quote_plus,
         ),
     )
+
+
+def trigger_change_email(request):
+    token = request.session['token'].get('access_token')
+    # print(token)
+    email = request.session['userinfo'].get('email')
+    # print(email)
+
+    conn = http.client.HTTPSConnection(f"{settings.AUTH0_DOMAIN}")
+    payload = {
+        'client_id': settings.AUTH0_CLIENT_ID,
+        'email': email,
+        'connection': 'Username-Password-Authentication',
+    }
+    payload = json.dumps(payload)
+    # print(payload)
+
+    headers = {
+        'content-type': 'application/json',
+        'Authorization': f'Bearer {token}',
+    }
+    # print(headers)
+    
+    conn.request("POST", "/dbconnections/change_password", payload, headers)
+    res = conn.getresponse()
+    data = res.read()
+    # print(data.decode("utf-8"))
+
+    return redirect(reverse("authenticate:change_password") + '?email=sent&response=' + urllib.parse.quote_plus(data.decode("utf-8")))
