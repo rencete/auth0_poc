@@ -3,22 +3,23 @@ from django.shortcuts import render
 
 
 def index(request):
+    # print("keys: " + ' '.join(request.session.keys()))
+    # print("items: ")
+    # for item in request.session.items():
+    #     print(item)
     if request.user.is_authenticated:
-        pretty = {
-            "user": request.user.username,
-            "password": request.user.password,
-            "email": request.user.email,
-            "first_name": request.user.first_name,
-            "last_name": request.user.last_name,
-        }
+        userinfo = request.session['userinfo']
+        token = request.session['token']
     else:
-        pretty = None
+        userinfo = None
+        token = None
     return render(
         request,
         "core/index.html",
         context={
             "session": request.session.get("user"),
-            "pretty": json.dumps(pretty, indent=4),
+            "userinfo": json.dumps(userinfo, indent=4),
+            "token": json.dumps(token, indent=4),
         },
     )
 

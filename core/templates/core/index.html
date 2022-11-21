@@ -7,7 +7,9 @@
                 <div class="card-body">
                     <h5 class="card-title">User is Authenticated</h5>
                     <h6 class="card-subtitle mb-2 text-muted">User information</h6>
-                    <p class="card-text">TBD</p>
+                    <p class="card-text">{{ userinfo }}</p>
+                    <h6 class="card-subtitle mb-2 text-muted">Token</h6>
+                    <p class="card-text">{{ token }}</p>
                     <a href="{% url 'auth0:logout' %}" class="btn btn-primary">Logout</a>
                 </div>
             </div>

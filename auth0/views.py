@@ -28,9 +28,11 @@ def login(request):
 
 def callback(request):
     token = oauth.auth0.authorize_access_token(request)
-    print(token)
+    request.session['token'] = token
+    # print(token)
     userinfo = token.get("userinfo")
-    print(userinfo)
+    request.session['userinfo'] = userinfo
+    # print(userinfo)
     if userinfo is not None:
         email = userinfo.get("email")
         name = userinfo.get("name")
@@ -39,7 +41,6 @@ def callback(request):
     except User.DoesNotExist:
         user = User.objects.create_user(name, email)
     auth_login(request, user)
-    # request.session["user"] = token
     return redirect(request.build_absolute_uri(reverse("core:index")))
 
 
