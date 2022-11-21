@@ -73,7 +73,7 @@ def trigger_change_email(request):
     payload = {
         'client_id': settings.AUTH0_CLIENT_ID,
         'email': email,
-        'connection': 'Username-Password-Authentication',
+        'connection': settings.AUTH0_DB_NAME,
     }
     payload = json.dumps(payload)
     # print(payload)
