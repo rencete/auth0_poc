@@ -10,9 +10,11 @@ def index(request):
     if request.user.is_authenticated:
         userinfo = request.session['userinfo']
         token = request.session['token']
+        token_response = request.session['token_response']
     else:
         userinfo = None
         token = None
+        token_response = None
     return render(
         request,
         "core/index.html",
@@ -20,6 +22,7 @@ def index(request):
             "session": request.session.get("user"),
             "userinfo": json.dumps(userinfo, indent=4),
             "token": json.dumps(token, indent=4),
+            "token_response": json.dumps(token_response, indent=4),
         },
     )
 
