@@ -40,8 +40,6 @@ def profile_update(request):
     print(user_metadata)
 
     users = Users(domain, mgmt_api_token)
-    # user = users.get(user_id)
-    # print(user)
     response = users.update(user_id, user_metadata)
     print(response)
 

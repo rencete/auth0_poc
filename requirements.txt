@@ -1,10 +1,4 @@
 auth0-python ~= 3.24
-authlib ~= 1.1
 django ~= 4.1
-django-extensions ~= 3.2
-djlint ~= 1.19
 nanoid ~= 2.0
-pyOpenSSL ~= 22.1
 python-dotenv ~= 0.21
-requests ~= 2.28
-Werkzeug ~= 2.2

@@ -1,6 +1,7 @@
+import urllib
+import nanoid
 from auth0.v3.authentication import Database, GetToken, Users
 # from auth0.v3.authentication import Logout
-# from authlib.integrations.django_client import OAuth
 from django.conf import settings
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -8,49 +9,18 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login as auth_login
 from urllib.parse import quote_plus, urlencode
 
-# import http.client
-# import json
-import urllib
-import nanoid
-
 
 domain = settings.AUTH0_DOMAIN
 client_id = settings.AUTH0_CLIENT_ID
 client_secret = settings.AUTH0_CLIENT_SECRET
 
-# oauth = OAuth()
-
-# oauth.register(
-#     "auth0a",
-#     client_id=settings.AUTH0_CLIENT_ID,
-#     client_secret=settings.AUTH0_CLIENT_SECRET,
-#     client_kwargs={
-#         "scope": "openid profile email",
-#     },
-#     server_metadata_url=f"https://{settings.AUTH0_DOMAIN}/.well-known/openid-configuration",
-# )
-
 
 def login(request):
     state = nanoid.generate()
     request.session['state'] = state
-    print(state)
+    # print(state)
 
     scope = 'openid profile email'
-
-    # client = AuthorizeClient(domain)
-    # response = client.authorize(
-    #     client_id=client_id,
-    #     state=state,
-    #     redirect_uri=request.build_absolute_uri(reverse("auth0a:callback")),
-    #     scope=scope,
-    # )
-
-    # return HttpResponse(response)
-
-    # return oauth.auth0a.authorize_redirect(
-    #     request, request.build_absolute_uri(reverse("auth0a:callback"))
-    # )
 
     return redirect(
         f"https://{domain}/authorize?"
@@ -101,13 +71,6 @@ def callback(request):
     userinfo = userinfo_client.userinfo(access_token)
     request.session['userinfo'] = userinfo
     # print(userinfo)
-
-    # token = oauth.auth0a.authorize_access_token(request)
-    # request.session['token'] = token
-    # # print(token)
-    # userinfo = token.get("userinfo")
-    # request.session['userinfo'] = userinfo
-    # # print(userinfo)
 
     if userinfo is not None and userinfo != '':
         email = userinfo.get("email")
@@ -161,25 +124,5 @@ def trigger_change_email(request):
         connection=settings.AUTH0_DB_NAME,
     )
     # print(response)
-
-    # conn = http.client.HTTPSConnection(f"{settings.AUTH0_DOMAIN}")
-    # payload = {
-    #     'client_id': settings.AUTH0_CLIENT_ID,
-    #     'email': email,
-    #     'connection': settings.AUTH0_DB_NAME,
-    # }
-    # payload = json.dumps(payload)
-    # # print(payload)
-
-    # headers = {
-    #     'content-type': 'application/json',
-    #     'Authorization': f'Bearer {token}',
-    # }
-    # # print(headers)
-
-    # conn.request("POST", "/dbconnections/change_password", payload, headers)
-    # res = conn.getresponse()
-    # data = res.read()
-    # print(data.decode("utf-8"))
 
     return redirect(reverse("authenticate:change_password") + '?email=sent&response=' + urllib.parse.quote_plus(response))
