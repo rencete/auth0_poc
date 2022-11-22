@@ -14,7 +14,7 @@ import urllib
 oauth = OAuth()
 
 oauth.register(
-    "auth0",
+    "auth0a",
     client_id=settings.AUTH0_CLIENT_ID,
     client_secret=settings.AUTH0_CLIENT_SECRET,
     client_kwargs={
@@ -25,13 +25,13 @@ oauth.register(
 
 
 def login(request):
-    return oauth.auth0.authorize_redirect(
-        request, request.build_absolute_uri(reverse("auth0:callback"))
+    return oauth.auth0a.authorize_redirect(
+        request, request.build_absolute_uri(reverse("auth0a:callback"))
     )
 
 
 def callback(request):
-    token = oauth.auth0.authorize_access_token(request)
+    token = oauth.auth0a.authorize_access_token(request)
     request.session['token'] = token
     # print(token)
     userinfo = token.get("userinfo")

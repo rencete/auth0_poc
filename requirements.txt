@@ -1,3 +1,4 @@
+auth0-python ~= 3.24
 authlib ~= 1.1
 django ~= 4.1
 django-extensions ~= 3.2

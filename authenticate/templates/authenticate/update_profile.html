@@ -3,17 +3,17 @@
     <section class="mb-4">
         {% if user.is_authenticated %}
             <div class="card">
-                <div class="card-header">Change Password</div>
+                <div class="card-header">Update Profile</div>
                 <div class="card-body">
                     {% if sent %}
-                        <h6 class="card-subtitle mb-2 text-muted">Change password response</h6>
+                        <h6 class="card-subtitle mb-2 text-muted">Update profile response</h6>
                         <p class="card-text">Response from API is: "{{ response }}"</p>
-                        <p class="card-text">Click the button below if you want to trigger the password change email again.</p>
-                        <a href="{% url 'auth0a:trigger_change_email' %}" class="btn btn-primary">Change Password</a>
+                        <p class="card-text">Click the button below if you want to update your profile again.</p>
+                        <a href="{% url 'auth0m:profile_update' %}" class="btn btn-primary">Update Profile</a>
                     {% else %}
-                        <h6 class="card-subtitle mb-2 text-muted">Change password</h6>
-                        <p class="card-text">Click the button below to trigger password change email.</p>
-                        <a href="{% url 'auth0a:trigger_change_email' %}" class="btn btn-primary">Change Password</a>
+                        <h6 class="card-subtitle mb-2 text-muted">Update profile</h6>
+                        <p class="card-text">Click the button below to update your profile.</p>
+                        <a href="{% url 'auth0m:profile_update' %}" class="btn btn-primary">Update Profile</a>
                     {% endif %}
                 </div>
                 <div class="card-footer text-muted">
@@ -22,10 +22,10 @@
             </div>
         {% else %}
             <div class="card">
-                <div class="card-header">Change Password</div>
+                <div class="card-header">Update Profile</div>
                 <div class="card-body">
                     <h6 class="card-subtitle mb-2 text-muted">Not Authenticated</h6>
-                    <p class="card-text">Login first before you can change password.</p>
+                    <p class="card-text">Login first before you can update your profile.</p>
                 </div>
             </div>
         {% endif %}

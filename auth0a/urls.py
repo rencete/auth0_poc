@@ -3,7 +3,7 @@ from django.urls import path
 
 from . import views
 
-app_name = 'auth0'
+app_name = 'auth0a'
 urlpatterns = [
     path("login", views.login, name="login"),
     path("logout", views.logout, name="logout"),

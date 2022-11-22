@@ -44,3 +44,11 @@ def change_password(request):
             "token": json.dumps(token, indent=4),
         },
     )
+
+
+def update_profile(request):
+    return render(
+        request,
+        "authenticate/update_profile.html",
+        context={},
+    )

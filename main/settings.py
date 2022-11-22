@@ -22,7 +22,8 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.40.132']
 
 INSTALLED_APPS = [
     'core',
-    'auth0',
+    'auth0a',
+    'auth0m',
     'authenticate',
 
     'django.contrib.admin',
@@ -131,5 +132,7 @@ AUTH0_DOMAIN = os.environ.get("AUTH0_DOMAIN")
 AUTH0_CLIENT_ID = os.environ.get("AUTH0_CLIENT_ID")
 AUTH0_CLIENT_SECRET = os.environ.get("AUTH0_CLIENT_SECRET")
 AUTH0_DB_NAME = os.environ.get("AUTH0_DB_NAME")
+AUTH0_NON_INTERACTIVE_CLIENT_ID = os.environ.get("AUTH0_NON_INTERACTIVE_CLIENT_ID")
+AUTH0_NON_INTERACTIVE_CLIENT_SECRET = os.environ.get("AUTH0_NON_INTERACTIVE_CLIENT_SECRET")
 
 LOGIN_URL='/cover'
