@@ -5,16 +5,62 @@
             <div class="card">
                 <div class="card-header">Update Profile</div>
                 <div class="card-body">
-                    {% if sent %}
-                        <h6 class="card-subtitle mb-2 text-muted">Update profile response</h6>
-                        <p class="card-text">Response from API is: "{{ response }}"</p>
-                        <p class="card-text">Click the button below if you want to update your profile again.</p>
-                        <a href="{% url 'auth0m:profile_update' %}" class="btn btn-primary">Update Profile</a>
-                    {% else %}
-                        <h6 class="card-subtitle mb-2 text-muted">Update profile</h6>
-                        <p class="card-text">Click the button below to update your profile.</p>
-                        <a href="{% url 'auth0m:profile_update' %}" class="btn btn-primary">Update Profile</a>
-                    {% endif %}
+                    <h6 class="card-subtitle mb-2 text-muted">Update profile</h6>
+                    <p class="card-text">Complete the form below to update your profile.</p>
+                    <form action="{% url 'auth0m:profile_update' %}" method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label me-3" for="preferredLanguageRadioOptions">Preferred Language:</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input"
+                                       type="radio"
+                                       name="preferredLanguageRadioOptions"
+                                       id="form-preferred-language-en"
+                                       value="EN"/>
+                                <label class="form-check-label" for="form-preferred-language-en">English</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input"
+                                       type="radio"
+                                       name="preferredLanguageRadioOptions"
+                                       id="form-preferred-language-fr"
+                                       value="FR"/>
+                                <label class="form-check-label" for="form-preferred-language-fr">French</label>
+                            </div>
+                        </div>
+                        <label class="form-label mb-0" for="form-profile-street-address">Street Address</label>
+                        <input type="text"
+                               name="streetAddress"
+                               id="form-profile-street-address"
+                               class="form-control mb-3"/>
+                        <label class="form-label mb-0" for="form-profile-city">City</label>
+                        <input type="text"
+                               name="city"
+                               id="form-profile-city"
+                               class="form-control mb-3"/>
+                        <label class="form-label mb-0" for="form-profile-postal-code">Postal Code</label>
+                        <input type="text"
+                               name="postalCode"
+                               id="form-profile-postal-code"
+                               class="form-control mb-3"/>
+                        <label class="form-label mb-0" for="form-profile-province">Province</label>
+                        <input type="text"
+                               name="province"
+                               id="form-profile-province"
+                               class="form-control mb-3"/>
+                        <label class="form-label mb-0" for="form-profile-phone-number">Phone number</label>
+                        <input type="tel"
+                               name="phoneNumber"
+                               id="form-profile-phone-number"
+                               class="form-control mb-3"
+                               pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"/>
+                        <label class="form-label mb-0" for="form-profile-birthday">Birthday</label>
+                        <input type="date"
+                               name="birthday"
+                               id="form-profile-birthday"
+                               class="form-control mb-3"/>
+                        <input type="submit" class="btn btn-primary" value="Update Profile" />
+                    </form>
                 </div>
                 <div class="card-footer text-muted">
                     Go to <a href="{% url 'core:index' %}" class="card-link">Main Page</a> to log out.

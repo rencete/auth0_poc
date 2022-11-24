@@ -24,7 +24,7 @@ def change_password(request):
     password_change_email_sent = False
     response = ''
     if request.GET.get('email', '') == 'sent':
-        password_change_email_sent = True    
+        password_change_email_sent = True
         response = request.GET.get('response', '')
 
     if request.user.is_authenticated:
@@ -51,4 +51,16 @@ def update_profile(request):
         request,
         "authenticate/update_profile.html",
         context={},
+    )
+
+
+def profile_updated(request):
+    response = request.GET.get('response', '')
+    return render(
+        request,
+        "authenticate/profile_updated.html",
+        context={
+            "session": request.session.get("user"),
+            "response": response,
+        },
     )

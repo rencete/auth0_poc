@@ -1,0 +1,27 @@
+{% extends "core/sidebar.html" %}
+{% block content %}
+    <section class="mb-4">
+        {% if user.is_authenticated %}
+            <div class="card">
+                <div class="card-header">Update Profile</div>
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Update profile response</h6>
+                    <p class="card-text">Response from API is: "{{ response }}"</p>
+                    <p class="card-text">Click the link below if you want to update the profile again.</p>
+                    <a href="{% url 'authenticate:update_profile' %}" class="card-link">Update Profile Page</a>
+                </div>
+                <div class="card-footer text-muted">
+                    Go to <a href="{% url 'core:index' %}" class="card-link">Main Page</a> to log out.
+                </div>
+            </div>
+        {% else %}
+            <div class="card">
+                <div class="card-header">Update Profile</div>
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Not Authenticated</h6>
+                    <p class="card-text">Login first before you can update your profile.</p>
+                </div>
+            </div>
+        {% endif %}
+    </section>
+{% endblock content %}
