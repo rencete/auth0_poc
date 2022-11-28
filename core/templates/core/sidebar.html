@@ -15,7 +15,7 @@
            class="list-group-item list-group-item-action py-2 ripple"
            aria-current="true">
           <i class="fas fa-universal-access fa-fw me-3"></i>
-          <span>Universal Login</span>
+          <span>Classic Universal Login</span>
         </a>
         <a href="{% url 'authenticate:change_password' %}"
            class="list-group-item list-group-item-action py-2 ripple"
@@ -28,6 +28,12 @@
            aria-current="true">
           <i class="fas fa-unlock fa-fw me-3"></i>
           <span>Update Profile</span>
+        </a>
+        <a href="{% url 'authenticate:new_universal_login' %}"
+           class="list-group-item list-group-item-action py-2 ripple"
+           aria-current="true">
+          <i class="fas fa-universal-access fa-fw me-3"></i>
+          <span>New Universal Login</span>
         </a>
       </div>
     </div>

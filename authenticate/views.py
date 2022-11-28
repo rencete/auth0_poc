@@ -64,3 +64,21 @@ def profile_updated(request):
             "response": response,
         },
     )
+
+
+def new_universal_login(request):
+    if request.user.is_authenticated:
+        userinfo = request.session['userinfo']
+        token = request.session['token']
+    else:
+        userinfo = None
+        token = None
+    return render(
+        request,
+        "authenticate/new_universal_login.html",
+        context={
+            "session": request.session.get("user"),
+            "userinfo": json.dumps(userinfo, indent=4),
+            "token": json.dumps(token, indent=4),
+        },
+    )

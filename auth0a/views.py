@@ -126,3 +126,101 @@ def trigger_change_email(request):
     # print(response)
 
     return redirect(reverse("authenticate:change_password") + '?email=sent&response=' + urllib.parse.quote_plus(response))
+
+
+def new_login(request):
+    # Using a different tenant for new universal login
+    domain = settings.NEW_AUTH0_DOMAIN
+    client_id = settings.NEW_AUTH0_CLIENT_ID
+
+    state = nanoid.generate()
+    request.session['state'] = state
+    # print(state)
+    scope = 'openid profile email'
+
+    return redirect(
+        f"https://{domain}/authorize?"
+        + urlencode(
+            {
+                "client_id": client_id,
+                "response_type": "code",
+                "scope": scope,
+                "state": state,
+                "redirect_uri": request.build_absolute_uri(reverse("auth0a:new_callback")),
+            },
+            quote_via=quote_plus,
+        ),
+    )
+
+
+def new_callback(request):
+    # Using a different tenant for new universal login
+    domain = settings.NEW_AUTH0_DOMAIN
+    client_id = settings.NEW_AUTH0_CLIENT_ID
+    client_secret = settings.NEW_AUTH0_CLIENT_SECRET
+
+    code = request.GET.get('code', '')
+    # print(code)
+    current_state = request.GET.get('state', '')
+    # print(current_state)
+    previous_state = request.session['state']
+    if current_state == '' or previous_state == '' or current_state != previous_state:
+        # invalid state value
+        print(
+            f'Mismatch of state values, previous={previous_state}, current={current_state}')
+        # redirect to logout just in case
+        return redirect(request.build_absolute_uri(reverse("auth0a:logout")))
+
+    client = GetToken(domain)
+    response = client.authorization_code(
+        client_id=client_id,
+        client_secret=client_secret,
+        code=code,
+        redirect_uri=request.build_absolute_uri(reverse("auth0a:new_callback")),
+    )
+    # print(response)
+
+    request.session['token_response'] = response
+    access_token = response.get('access_token')
+    request.session['token'] = access_token
+    # print(access_token)
+    id_token = response.get('id_token')
+    # print(id_token)
+
+    # Get the userinfo from the endpoint
+    userinfo_client = Users(domain)
+    userinfo = userinfo_client.userinfo(access_token)
+    request.session['userinfo'] = userinfo
+    # print(userinfo)
+
+    if userinfo is not None and userinfo != '':
+        email = userinfo.get("email")
+        name = userinfo.get("name")
+        print(email)
+        print(name)
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        user = User.objects.create_user(name, email)
+    auth_login(request, user)
+    return redirect(request.build_absolute_uri(reverse("core:index")))
+
+
+def new_logout(request):
+    # Using a different tenant for new universal login
+    domain = settings.NEW_AUTH0_DOMAIN
+    client_id = settings.NEW_AUTH0_CLIENT_ID
+    # client_secret = settings.NEW_AUTH0_CLIENT_SECRET
+
+    request.session.clear()
+
+    return redirect(
+        f"https://{domain}/v2/logout?"
+        + urlencode(
+            {
+                "returnTo": request.build_absolute_uri(reverse("core:index")),
+                "client_id": client_id,
+            },
+            quote_via=quote_plus,
+        ),
+    )

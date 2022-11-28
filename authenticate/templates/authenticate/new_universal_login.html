@@ -3,7 +3,7 @@
     <section class="mb-4">
         {% if user.is_authenticated %}
             <div class="card">
-                <div class="card-header">Classic Universal Login</div>
+                <div class="card-header">New Universal Login</div>
                 <div class="card-body">
                     <h6 class="card-subtitle mb-2 text-muted">User information:</h6>
                     <p class="card-text">{{ userinfo }}</p>
@@ -12,11 +12,11 @@
             </div>
         {% else %}
             <div class="card">
-                <div class="card-header">Classic Universal Login</div>
+                <div class="card-header">New Universal Login</div>
                 <div class="card-body">
                     <h6 class="card-subtitle mb-2 text-muted">Not Authenticated</h6>
                     <p class="card-text">Click the button below to use Auth0's universal login.</p>
-                    <a href="{% url 'auth0a:login' %}" class="btn btn-primary">Universal Login</a>
+                    <a href="{% url 'auth0a:new_login' %}" class="btn btn-primary">Universal Login</a>
                 </div>
             </div>
         {% endif %}
