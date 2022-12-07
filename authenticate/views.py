@@ -1,5 +1,11 @@
 import json
-from django.shortcuts import render
+import requests
+from django.shortcuts import (
+    render,
+    redirect,
+)
+from django.urls import reverse
+from core.types import PROFILE_STATES
 
 
 def universal_login(request):
@@ -56,6 +62,7 @@ def update_profile(request):
 
 def profile_updated(request):
     response = request.GET.get('response', '')
+
     return render(
         request,
         "authenticate/profile_updated.html",
@@ -64,6 +71,17 @@ def profile_updated(request):
             "response": response,
         },
     )
+
+
+def login_check(request):
+    userinfo = request.session['userinfo']
+    # print(type(userinfo)) # type: dict
+    # print(userinfo)
+
+    if userinfo.get("profile_state") == PROFILE_STATES.NEW.value:
+        return redirect(request.build_absolute_uri(reverse("authenticate:update_profile")))
+
+    return redirect(request.build_absolute_uri(reverse("core:index")))
 
 
 def new_universal_login(request):

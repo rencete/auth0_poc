@@ -1,26 +1,23 @@
-function getByEmail(email, callback) {
-    const mysql = require('mysql');
-  
-    const connection = mysql.createConnection({
-        host: 'sql9.freemysqlhosting.net',
-        user: 'sql9581100',
-        password: 'cnNLWryTrV',
-        database: 'sql9581100'
-    });
-  
-    connection.connect();
+function loginByEmail(email, callback) {  
+  const postgres = require('pg');
 
-    const query = 'SELECT first_name, last_name, email FROM users WHERE email = ?';
-  
-    connection.query(query, [ email ], function(err, results) {
-      if (err || results.length === 0) return callback(err || null);
-  
-      const user = results[0];
-      callback(null, {
-        user_id: user.email,
-        nickname: user.email,
+  const connString = `postgres://${configuration.dbuser}:${configuration.dbpasswd}@${configuration.dbserver}/${configuration.dbdatabase}`;
+  postgres.connect(connString, function (err, client, done) {
+    if (err) return callback(err);
+
+    const query = 'SELECT id, nickname, email FROM users WHERE email = $1';
+    client.query(query, [email], function (err, result) {
+      done();
+
+      if (err || result.rows.length === 0) return callback(err);
+
+      const user = result.rows[0];
+
+      return callback(null, {
+        user_id: "customdb_" + user.id,
+        nickname: user.nickname,
         email: user.email
       });
     });
-  }
-  
+  });
+}

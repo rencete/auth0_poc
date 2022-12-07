@@ -1,7 +1,10 @@
 import json
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 
 
+@login_required
 def index(request):
     # print("keys: " + ' '.join(request.session.keys()))
     # print("items: ")
@@ -28,6 +31,10 @@ def index(request):
 
 
 def cover(request):
+    # Redirect to dashboard when already logged in
+    if request.user.is_authenticated:
+        return redirect(request.build_absolute_uri(reverse("core:index")));
+
     return render(
         request,
         "core/cover.html",

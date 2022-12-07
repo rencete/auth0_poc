@@ -1,12 +1,21 @@
 import urllib
 import nanoid
-from auth0.v3.authentication import Database, GetToken, Users
+from auth0.v3.authentication import (
+    Database,
+    GetToken,
+    Users,
+)
+from auth0.v3.authentication.token_verifier import (
+    TokenVerifier,
+    AsymmetricSignatureVerifier,
+)
 # from auth0.v3.authentication import Logout
 from django.conf import settings
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth import login as auth_login
+from django.http import JsonResponse
 from urllib.parse import quote_plus, urlencode
 
 
@@ -63,13 +72,33 @@ def callback(request):
     access_token = response.get('access_token')
     request.session['token'] = access_token
     # print(access_token)
+
+    # ID Token handling
     id_token = response.get('id_token')
+    # print(type(id_token)) # type: str
     # print(id_token)
+    request.session['id_token'] = id_token
+    # Verify the ID Token
+    signature_verifier = AsymmetricSignatureVerifier(
+        f'https://{domain}/.well-known/jwks.json'
+    )
+    id_token_verifier = TokenVerifier(
+        signature_verifier,
+        f'https://{domain}/',
+        client_id
+    )
+    id_token_payload = id_token_verifier.verify(id_token)
+    # print(type(id_token_payload)) # type: dict
+    # print(id_token_payload)
+    userinfo = id_token_payload
+    request.session['userinfo'] = userinfo
 
     # Get the userinfo from the endpoint
-    userinfo_client = Users(domain)
-    userinfo = userinfo_client.userinfo(access_token)
-    request.session['userinfo'] = userinfo
+    # userinfo is the same as the ID Token Payload after verification, therefore not needed anymore
+    # userinfo_client = Users(domain)
+    # userinfo = userinfo_client.userinfo(access_token)
+    # request.session['userinfo'] = userinfo
+    # print(type(userinfo)) # type: dict
     # print(userinfo)
 
     if userinfo is not None and userinfo != '':
@@ -82,7 +111,7 @@ def callback(request):
     except User.DoesNotExist:
         user = User.objects.create_user(name, email)
     auth_login(request, user)
-    return redirect(request.build_absolute_uri(reverse("core:index")))
+    return redirect(request.build_absolute_uri(reverse("authenticate:login_check")))
 
 
 def logout(request):
@@ -176,7 +205,8 @@ def new_callback(request):
         client_id=client_id,
         client_secret=client_secret,
         code=code,
-        redirect_uri=request.build_absolute_uri(reverse("auth0a:new_callback")),
+        redirect_uri=request.build_absolute_uri(
+            reverse("auth0a:new_callback")),
     )
     # print(response)
 
@@ -224,3 +254,4 @@ def new_logout(request):
             quote_via=quote_plus,
         ),
     )
+    

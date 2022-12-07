@@ -1,9 +1,11 @@
 function login(email, password, callback) {
-    const mysql = require('mysql');
+    const postgres = require('pg');
     const crypto = require('crypto');
 
     const iterations = 1000;
     const hashFn = 'sha256';
+
+    const connString = `postgres://${configuration.dbuser}:${configuration.dbpasswd}@${configuration.dbserver}/${configuration.dbdatabase}`;
 
     function readNetworkByteOrder(buffer, offset) {
         return ((buffer[offset + 3]) << 24)
@@ -46,32 +48,29 @@ function login(email, password, callback) {
         return [subkeyLength, salt, expectedSubkey];
     }
 
-    const connection = mysql.createConnection({
-        host: 'sql9.freemysqlhosting.net',
-        user: 'sql9581100',
-        password: 'cnNLWryTrV',
-        database: 'sql9581100'
-    });
-
-    connection.connect();
-
-    const query = 'SELECT first_name, last_name, email, password_hash FROM users WHERE email = ?';
-
-    connection.query(query, [email], function (err, results) {
+    postgres.connect(connString, function (err, client, done) {
         if (err) return callback(err);
-        if (results.length === 0) return callback(new WrongUsernameOrPasswordError(email));
-        const user = results[0];
 
-        const [subkeyLength, salt, subkey] = getSaltAndSubkey(user.password_hash);
-        crypto.pbkdf2(password, salt, iterations, subkeyLength, hashFn, function (err, derivedKey) {
-            if (err || !derivedKey) return callback(err || new WrongUsernameOrPasswordError(email));
+        const query = 'SELECT id, nickname, email, password FROM users WHERE email = $1';
 
-            if (derivedKey.toString('base64') !== subkey.toString('base64')) return callback(err || new WrongUsernameOrPasswordError(email));
+        client.query(query, [email], function (err, result) {
+            done();
 
-            callback(null, {
-                user_id: user.email,
-                nickname: user.email,
-                email: user.email
+            if (err || result.rows.length === 0) return callback(err || new WrongUsernameOrPasswordError(email));
+
+            const user = result.rows[0];
+            const [subkeyLength, salt, subkey] = getSaltAndSubkey(user.password);
+
+            crypto.pbkdf2(password, salt, iterations, subkeyLength, hashFn, function (err, derivedKey) {
+                if (err || !derivedKey) return callback(err || new WrongUsernameOrPasswordError(email));
+    
+                if (derivedKey.toString('base64') !== subkey.toString('base64')) return callback(err || new WrongUsernameOrPasswordError(email));
+    
+                callback(null, {
+                    user_id: "customdb_" + user.id,
+                    nickname: user.nickname,
+                    email: user.email
+                });
             });
         });
     });
