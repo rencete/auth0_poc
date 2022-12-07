@@ -31,16 +31,21 @@ def login(request):
 
     scope = 'openid profile email'
 
+    query_params = {
+        "client_id": client_id,
+        "response_type": "code",
+        "scope": scope,
+        "state": state,
+        "redirect_uri": request.build_absolute_uri(reverse("auth0a:callback")),
+    }
+
+    if 'mfa' in request.GET:
+        query_params['acr_values'] = 'http://schemas.openid.net/pape/policies/2007/06/multi-factor'
+
     return redirect(
         f"https://{domain}/authorize?"
         + urlencode(
-            {
-                "client_id": client_id,
-                "response_type": "code",
-                "scope": scope,
-                "state": state,
-                "redirect_uri": request.build_absolute_uri(reverse("auth0a:callback")),
-            },
+            query_params,
             quote_via=quote_plus,
         ),
     )
@@ -111,7 +116,7 @@ def callback(request):
     except User.DoesNotExist:
         user = User.objects.create_user(name, email)
     auth_login(request, user)
-    return redirect(request.build_absolute_uri(reverse("authenticate:login_check")))
+    return redirect(request.build_absolute_uri(reverse("authenticate:check_profile_on_login")))
 
 
 def logout(request):
@@ -254,4 +259,3 @@ def new_logout(request):
             quote_via=quote_plus,
         ),
     )
-    

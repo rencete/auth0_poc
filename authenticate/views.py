@@ -1,11 +1,12 @@
 import json
-import requests
 from django.shortcuts import (
     render,
     redirect,
 )
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 from core.types import PROFILE_STATES
+from .utils import is_mfa
 
 
 def universal_login(request):
@@ -26,7 +27,12 @@ def universal_login(request):
     )
 
 
+@login_required
 def change_password(request):
+    userinfo = request.session['userinfo']
+    if not is_mfa(userinfo):
+        return redirect(request.build_absolute_uri(reverse("authenticate:require_step_up")))
+
     password_change_email_sent = False
     response = ''
     if request.GET.get('email', '') == 'sent':
@@ -52,6 +58,7 @@ def change_password(request):
     )
 
 
+@login_required
 def update_profile(request):
     return render(
         request,
@@ -60,6 +67,7 @@ def update_profile(request):
     )
 
 
+@login_required
 def profile_updated(request):
     response = request.GET.get('response', '')
 
@@ -73,7 +81,8 @@ def profile_updated(request):
     )
 
 
-def login_check(request):
+@login_required
+def check_profile_on_login(request):
     userinfo = request.session['userinfo']
     # print(type(userinfo)) # type: dict
     # print(userinfo)
@@ -82,6 +91,18 @@ def login_check(request):
         return redirect(request.build_absolute_uri(reverse("authenticate:update_profile")))
 
     return redirect(request.build_absolute_uri(reverse("core:index")))
+
+
+@login_required
+def require_step_up(request):
+    requesting_page = request.GET.get('next', request.build_absolute_uri(reverse("core:index")))
+    return render(
+        request,
+        "authenticate/require_step_up.html",
+        context={
+            "page": requesting_page,
+        },
+    )
 
 
 def new_universal_login(request):

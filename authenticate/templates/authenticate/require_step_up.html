@@ -1,0 +1,16 @@
+{% extends "core/sidebar.html" %}
+{% block content %}
+    <section class="mb-4">
+        <div class="card">
+            <div class="card-header">Require Step-Up Authentication</div>
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Step-Up Authentication</h6>
+                <p class="card-text">The page you requested requires more security to proceed. Click the button below to step-up your login.</p>
+                <a href="{% url 'auth0a:login' %}?mfa=" class="btn btn-primary">Step-up Authenticate</a>
+            </div>
+            <div class="card-footer text-muted">
+                Go to <a href="{% url 'core:index' %}" class="card-link">Main Page</a> to log out.
+            </div>
+        </div>
+    </section>
+{% endblock content %}

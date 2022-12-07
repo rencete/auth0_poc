@@ -71,13 +71,13 @@ def profile_update(request):
 
         users = Users(domain, mgmt_api_token)
         response = users.update(user_id, update_user_data)
-        print(type(response))
-        print(response)
+        # print(type(response))
+        # print(response)
 
         # User information may have been updated
         # Update the userinfo based from response
         updated_userinfo = update_userinfo_from_user(userinfo, response)
-        print(updated_userinfo)
+        # print(updated_userinfo)
         request.session['userinfo'] = updated_userinfo
 
         return redirect(
