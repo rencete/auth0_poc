@@ -9,6 +9,7 @@ from core.types import PROFILE_STATES
 from .utils import is_mfa
 
 
+@login_required
 def universal_login(request):
     if request.user.is_authenticated:
         userinfo = request.session['userinfo']
@@ -87,7 +88,7 @@ def check_profile_on_login(request):
     # print(type(userinfo)) # type: dict
     # print(userinfo)
 
-    if userinfo.get("profile_state") == PROFILE_STATES.NEW.value:
+    if userinfo.get("profile_state") == PROFILE_STATES.BASIC.value:
         return redirect(request.build_absolute_uri(reverse("authenticate:update_profile")))
 
     return redirect(request.build_absolute_uri(reverse("core:index")))
@@ -95,7 +96,8 @@ def check_profile_on_login(request):
 
 @login_required
 def require_step_up(request):
-    requesting_page = request.GET.get('next', request.build_absolute_uri(reverse("core:index")))
+    requesting_page = request.GET.get(
+        'next', request.build_absolute_uri(reverse("core:index")))
     return render(
         request,
         "authenticate/require_step_up.html",
@@ -105,6 +107,23 @@ def require_step_up(request):
     )
 
 
+def basic_profile(request):
+    token=request.GET.get('token')
+    state=request.GET.get('state')
+
+    if token:
+        request.session['profile_token'] = token
+    if state:
+        request.session['profile_state'] = state
+
+    return render(
+        request,
+        "authenticate/basic_profile.html",
+        context={},
+    )
+
+
+@login_required
 def new_universal_login(request):
     if request.user.is_authenticated:
         userinfo = request.session['userinfo']

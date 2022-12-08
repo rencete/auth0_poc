@@ -1,6 +1,7 @@
 exports.onExecutePreUserRegistration = async (event, api) => {
   const PROFILE_STATES = {
     NEW: "NEW",
+    BASIC: "BASIC",
     UPDATED: "UPDATED",
     MIGRATED: "MIGRATED"
   };

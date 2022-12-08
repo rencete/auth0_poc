@@ -10,5 +10,6 @@ urlpatterns = [
     path("profile_updated", views.profile_updated, name="profile_updated"),
     path("check_profile_on_login", views.check_profile_on_login, name="check_profile_on_login"),
     path("require_step_up", views.require_step_up, name="require_step_up"),
+    path("basic_profile", views.basic_profile, name="basic_profile"),
     path("new_universal_login", views.new_universal_login, name="new_universal_login"),
 ]

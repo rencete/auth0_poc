@@ -15,7 +15,6 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth import login as auth_login
-from django.http import JsonResponse
 from urllib.parse import quote_plus, urlencode
 
 

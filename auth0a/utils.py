@@ -1,6 +1,11 @@
 from django.conf import settings
 from auth0.v3.authentication import (
     Users,
+    token_verifier
+)
+from auth0.v3.authentication.token_verifier import (
+    SymmetricSignatureVerifier,
+    TokenVerifier
 )
 
 
@@ -16,3 +21,14 @@ def get_userinfo(access_token):
     # print(userinfo)
 
     return userinfo
+
+
+def verify_token_symmetric(secret, issuer, audience, token):
+    symmetric_verifier = SymmetricSignatureVerifier(secret)
+    token_verifier = TokenVerifier(
+        symmetric_verifier,
+        issuer,
+        audience,
+    )
+    payload = token_verifier.verify(token)
+    return payload
