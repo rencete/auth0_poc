@@ -1,11 +1,14 @@
 function login(email, password, callback) {
-    const postgres = require('pg');
+    const { Client } = require('pg');
     const crypto = require('crypto');
 
     const iterations = 1000;
     const hashFn = 'sha256';
 
     const connString = `postgres://${configuration.dbuser}:${configuration.dbpasswd}@${configuration.dbserver}/${configuration.dbdatabase}`;
+    const client = new Client({
+        connectionString: connString,
+    });
 
     function readNetworkByteOrder(buffer, offset) {
         return ((buffer[offset + 3]) << 24)
@@ -48,13 +51,12 @@ function login(email, password, callback) {
         return [subkeyLength, salt, expectedSubkey];
     }
 
-    postgres.connect(connString, function (err, client, done) {
+    client.connect(function (err) {
         if (err) return callback(err);
 
         const query = 'SELECT id, nickname, email, password FROM users WHERE email = $1';
 
         client.query(query, [email], function (err, result) {
-            done();
 
             if (err || result.rows.length === 0) return callback(err || new WrongUsernameOrPasswordError(email));
 

@@ -1,14 +1,16 @@
-function loginByEmail(email, callback) {  
-  const postgres = require('pg');
+function loginByEmail(email, callback) {
+  const { Client } = require('pg');
 
   const connString = `postgres://${configuration.dbuser}:${configuration.dbpasswd}@${configuration.dbserver}/${configuration.dbdatabase}`;
-  postgres.connect(connString, function (err, client, done) {
+  const client = new Client({
+    connectionString: connString,
+  });
+
+  client.connect(function (err) {
     if (err) return callback(err);
 
     const query = 'SELECT id, nickname, email FROM users WHERE email = $1';
     client.query(query, [email], function (err, result) {
-      done();
-
       if (err || result.rows.length === 0) return callback(err);
 
       const user = result.rows[0];
