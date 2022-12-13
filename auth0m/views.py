@@ -120,6 +120,7 @@ def basic_profile_update(request):
         family_name = request.POST.get("familyName")
         province = request.POST.get("province")
         security_answer = request.POST.get("securityAnswer")
+        security_answer = security_answer.upper()
         # print(given_name)
         # print(family_name)
         # print(province)
@@ -199,3 +200,67 @@ def basic_profile_update(request):
         )
     else:
         return redirect(request.build_absolute_uri(reverse("authenticate:basic_profile")))
+
+
+def check_security_answer(request):
+    if request.method == 'POST':
+        # Get parameters
+        security_answer = request.POST.get("securityAnswer")
+        security_answer = security_answer.upper()
+        print(security_answer)
+
+        hashed_answer = base64.b64encode(hashlib.sha256(
+            security_answer.encode('ascii')).digest()).decode('ascii')
+        print(hashed_answer)
+
+        # Retrieve information sent by Auth0 from session
+        auth0_token = request.session['profile_token']
+        state = request.session['profile_state']
+        # Delete information sent by Auth0 from session
+        del request.session['profile_token']
+        del request.session['profile_state']
+
+        # Need the user_id from Auth0 as user is not yet logged in
+        auth0_payload_token = verify_token_symmetric(
+            settings.HS256_SHARED_SECRET,
+            settings.AUTH0_DOMAIN,
+            settings.AUTH0_CLIENT_ID,
+            auth0_token,
+        )
+        user_id = auth0_payload_token.get('sub')
+        # print(user_id)
+        num_attempts = auth0_payload_token.get('attempts', 0)
+
+        exp = datetime.datetime.now() + datetime.timedelta(minutes=5)
+        exp = int(exp.timestamp())
+        client_payload = {
+            "sub": user_id,
+            "iss": settings.AUTH0_APP_NAME,
+            "exp": exp,
+            "state": state,
+            "aud": settings.AUTH0_DOMAIN, # Not in documentation but mandatory to be included. Value does not seem to be checked.
+            "iat": int(datetime.datetime.now().timestamp()), # Not in documentation but mandatory to be included
+            # Add additional fields below
+            "answer_hash": hashed_answer,
+            "attempts": num_attempts + 1,
+        }
+        client_payload_token = jwt.encode(
+            payload=client_payload,
+            key=settings.HS256_SHARED_SECRET
+        )
+        print(client_payload_token)
+
+        query_params = {
+            "state": state,
+            "token": client_payload_token,
+        }
+
+        return redirect(
+            f"https://{domain}/continue?"
+            + urlencode(
+                query_params,
+                quote_via=quote_plus,
+            ),
+        )
+    else:
+        return redirect(request.build_absolute_uri(reverse("authenticate:answer_security_question")))

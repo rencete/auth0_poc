@@ -11,5 +11,6 @@ urlpatterns = [
     path("check_profile_on_login", views.check_profile_on_login, name="check_profile_on_login"),
     path("require_step_up", views.require_step_up, name="require_step_up"),
     path("basic_profile", views.basic_profile, name="basic_profile"),
+    path("answer_security_question", views.answer_security_question, name="answer_security_question"),
     path("new_universal_login", views.new_universal_login, name="new_universal_login"),
 ]

@@ -123,6 +123,22 @@ def basic_profile(request):
     )
 
 
+def answer_security_question(request):
+    token=request.GET.get('token')
+    state=request.GET.get('state')
+
+    if token:
+        request.session['profile_token'] = token
+    if state:
+        request.session['profile_state'] = state
+
+    return render(
+        request,
+        "authenticate/answer_security_question.html",
+        context={},
+    )
+
+
 @login_required
 def new_universal_login(request):
     if request.user.is_authenticated:
