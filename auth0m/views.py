@@ -184,7 +184,7 @@ def basic_profile_update(request):
             payload=client_payload,
             key=settings.HS256_SHARED_SECRET
         )
-        print(client_payload_token)
+        # print(client_payload_token)
 
         query_params = {
             "state": state,
@@ -207,11 +207,11 @@ def check_security_answer(request):
         # Get parameters
         security_answer = request.POST.get("securityAnswer")
         security_answer = security_answer.upper()
-        print(security_answer)
+        # print(security_answer)
 
         hashed_answer = base64.b64encode(hashlib.sha256(
             security_answer.encode('ascii')).digest()).decode('ascii')
-        print(hashed_answer)
+        # print(hashed_answer)
 
         # Retrieve information sent by Auth0 from session
         auth0_token = request.session['profile_token']
@@ -248,7 +248,7 @@ def check_security_answer(request):
             payload=client_payload,
             key=settings.HS256_SHARED_SECRET
         )
-        print(client_payload_token)
+        # print(client_payload_token)
 
         query_params = {
             "state": state,

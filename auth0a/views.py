@@ -126,8 +126,8 @@ def callback(request):
     if userinfo is not None and userinfo != '':
         email = userinfo.get("email")
         name = userinfo.get("name")
-        print(email)
-        print(name)
+        # print(email)
+        # print(name)
     try:
         user = User.objects.get(email=email)
     except User.DoesNotExist:
@@ -248,8 +248,8 @@ def new_callback(request):
     if userinfo is not None and userinfo != '':
         email = userinfo.get("email")
         name = userinfo.get("name")
-        print(email)
-        print(name)
+        # print(email)
+        # print(name)
     try:
         user = User.objects.get(email=email)
     except User.DoesNotExist:

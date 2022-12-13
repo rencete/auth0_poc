@@ -1,4 +1,5 @@
 import json
+import base64
 from django.shortcuts import (
     render,
     redirect,
@@ -127,6 +128,12 @@ def answer_security_question(request):
     token=request.GET.get('token')
     state=request.GET.get('state')
 
+    # Get the number of attempts for display
+    payload_b64 = (token.split('.')[1]).encode('ascii') + b'=='
+    # print(payload_b64)
+    payload = json.loads(base64.b64decode(payload_b64))
+    # print(payload)
+
     if token:
         request.session['profile_token'] = token
     if state:
@@ -135,7 +142,9 @@ def answer_security_question(request):
     return render(
         request,
         "authenticate/answer_security_question.html",
-        context={},
+        context={
+            "attempt": payload.get('attempts', 0) + 1,
+        },
     )
 
 

@@ -47,6 +47,7 @@
                                     <div class="card-header">Security Questioin</div>
                                     <div class="card-body">
                                         <h6 class="card-subtitle mb-2 text-muted">Answer Security Question</h6>
+                                        <p class="card-text">Attempt: {{ attempt }}</p>
                                         <form action="{% url 'auth0m:check_security_answer' %}" method="post">
                                             {% csrf_token %}
                                             <label class="form-label mb-0" for="form-security-answer">What is the answer to the security question?</label>
