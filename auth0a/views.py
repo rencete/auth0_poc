@@ -51,6 +51,24 @@ def login(request):
 
 
 def callback(request):
+    error = request.GET.get('error')
+    if error:
+        # Save error code and description for later display
+        request.session['error_code'] = error
+        request.session['error_description'] = request.GET.get('error_description', '')
+
+        # logout to clear Auth0 sesson
+        return redirect(
+            f"https://{settings.AUTH0_DOMAIN}/v2/logout?"
+            + urlencode(
+                {
+                    "returnTo": request.build_absolute_uri(reverse("authenticate:login_error")),
+                    "client_id": settings.AUTH0_CLIENT_ID,
+                },
+                quote_via=quote_plus,
+            ),
+        )
+
     code = request.GET.get('code', '')
     # print(code)
     current_state = request.GET.get('state', '')

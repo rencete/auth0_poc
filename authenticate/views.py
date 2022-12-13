@@ -139,6 +139,24 @@ def answer_security_question(request):
     )
 
 
+def login_error(request):
+    error_code = request.session['error_code']
+    error_description = request.session['error_description']
+
+    # clear session to effectively logout and start from scratch
+    request.session.clear()
+
+    return render(
+        request,
+        "authenticate/login_error.html",
+        context={
+            "session": request.session.get("user"),
+            "error": error_code,
+            "description": error_description,
+        },
+    )
+
+
 @login_required
 def new_universal_login(request):
     if request.user.is_authenticated:
