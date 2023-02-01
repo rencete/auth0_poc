@@ -56,16 +56,28 @@
       <div id="error-message" class="alert alert-danger"></div>
       <form onsubmit="return false;" method="post">
         <div class="form-group">
-          <label for="name">Email</label>
+          <label for="email">Email</label>
           <input type="email" class="form-control" id="email" placeholder="Enter your email">
         </div>
         <div class="form-group">
-          <label for="name">Password</label>
+          <label for="password">Password</label>
           <input type="password" class="form-control" id="password" placeholder="Enter your password">
         </div>
         <div class="form-group" id="verify-password-grp">
-          <label for="name">Verify Password</label>
+          <label for="verify-password">Verify Password</label>
           <input type="password" class="form-control" id="verify-password" placeholder="Enter your password again">
+        </div>
+        <div class="form-group" id="firstname-grp">
+          <label for="firstname">Firstname</label>
+          <input type="text" class="form-control" id="firstname" placeholder="Enter your firstname">
+        </div>
+        <div class="form-group" id="lastname-grp">
+          <label for="lastname">Lastname</label>
+          <input type="text" class="form-control" id="lastname" placeholder="Enter your lastname">
+        </div>
+        <div class="form-group" id="nickname-grp">
+          <label for="nickname">Nickname</label>
+          <input type="text" class="form-control" id="nickname" placeholder="Enter your nickname">
         </div>
         <div class="captcha-container form-group"></div>
         <button type="submit" id="btn-login" class="btn btn-primary btn-block">
@@ -151,11 +163,32 @@
         var email = document.getElementById('email').value;
         var password = document.getElementById('password').value;
         var verifyPassword = document.getElementById('verify-password').value;
+        var firstname = document.getElementById('firstname').value;
+        var lastname = document.getElementById('lastname').value;
+        var nickname = document.getElementById('nickname').value;
 
         if (password !== verifyPassword) {
           const err = {
             policy: "Passwords do not match",
             description: "Entered password and verified password value must be the same."
+          }
+          displayError(err);
+        } else if (firstname.length == 0) {
+          const err = {
+            policy: "Empty firstname",
+            description: "A value for firstname should be provided."
+          }
+          displayError(err);
+        } else if (lastname.length == 0) {
+          const err = {
+            policy: "Empty lastname",
+            description: "A value for lastname should be provided."
+          }
+          displayError(err);
+        } else if (nickname.length == 0) {
+          const err = {
+            policy: "Empty nickname",
+            description: "A value for nickname should be provided."
           }
           displayError(err);
         } else {
@@ -164,12 +197,26 @@
             connection: databaseConnection,
             email: email,
             password: password,
-            captcha: captcha.getValue()
+            captcha: captcha.getValue(),
+            given_name: firstname,
+            family_name: lastname,
+            user_metadata: {
+              nickname: nickname
+            }
           }, function (err) {
             if (err) displayError(err);
             button.disabled = false;
           });
-        }        
+        }
+
+        // profile_data = {
+        //     "given_name": given_name,
+        //     "family_name": family_name,
+        //     "user_metadata": {
+        //         "province": province,
+        //         "security_answer": hashed_answer,
+        //     }
+        // }
       }
 
       function loginWithGoogle() {
@@ -199,6 +246,12 @@
           spanModeText.textContent = "Don't have an account? ";
           aModeChange = document.getElementById('a-mode-change');
           aModeChange.textContent = "Sign up";
+          divFirstname = document.getElementById('firstname-grp');
+          divFirstname.style.display = "none";
+          divLastname = document.getElementById('lastname-grp');
+          divLastname.style.display = "none";
+          divNickname = document.getElementById('nickname-grp');
+          divNickname.style.display = "none";
         } else if (mode == 'signup') {
           btnLogin = document.getElementById('btn-login')
           btnLogin.style.display = "none";
@@ -210,6 +263,12 @@
           spanModeText.textContent = "Already have an account? ";
           aModeChange = document.getElementById('a-mode-change');
           aModeChange.textContent = "Log in";
+          divFirstname = document.getElementById('firstname-grp');
+          divFirstname.style.display = "block";
+          divLastname = document.getElementById('lastname-grp');
+          divLastname.style.display = "block";
+          divNickname = document.getElementById('nickname-grp');
+          divNickname.style.display = "block";
         }
       }
 
