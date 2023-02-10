@@ -2,7 +2,7 @@ function login(email, password, callback) {
     const { Client } = require('pg');
     const crypto = require('crypto');
 
-    const iterations = 1000;
+    const iterations = 100000;
     const hashFn = 'sha256';
 
     const connString = `postgres://${configuration.dbuser}:${configuration.dbpasswd}@${configuration.dbserver}/${configuration.dbdatabase}`;
