@@ -29,6 +29,12 @@
           <i class="fas fa-unlock fa-fw me-3"></i>
           <span>Update Profile</span>
         </a>
+        <a href="{% url 'authenticate:delete_me' %}"
+           class="list-group-item list-group-item-action py-2 ripple"
+           aria-current="true">
+          <i class="fas fa-unlock fa-fw me-3"></i>
+          <span>Delete Account</span>
+        </a>
         <a href="{% url 'authenticate:new_universal_login' %}"
            class="list-group-item list-group-item-action py-2 ripple"
            aria-current="true">

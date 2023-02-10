@@ -1,0 +1,29 @@
+{% extends "core/sidebar.html" %}
+{% block content %}
+    <section class="mb-4">
+        {% if user.is_authenticated %}
+            <div class="card">
+                <div class="card-header">Delete Me</div>
+                <div class="card-body">
+                  <h6 class="card-subtitle mb-2 text-muted">Delete my account</h6>
+                  <p class="card-text">Click the button below if you really want to delete your account.</p>
+                  <form action="{% url 'auth0m:delete_user' %}" method="post">
+                      {% csrf_token %}
+                      <input type="submit" class="btn btn-primary" value="Delete my account" />
+                  </form>
+                </div>
+                <div class="card-footer text-muted">
+                    Go to <a href="{% url 'core:index' %}" class="card-link">Main Page</a> to log out.
+                </div>
+            </div>
+        {% else %}
+            <div class="card">
+                <div class="card-header">Change Password</div>
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Not Authenticated</h6>
+                    <p class="card-text">Login first before you can delete your account.</p>
+                </div>
+            </div>
+        {% endif %}
+    </section>
+{% endblock content %}

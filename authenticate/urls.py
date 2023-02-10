@@ -6,6 +6,7 @@ app_name = 'authenticate'
 urlpatterns = [
     path("universal_login", views.universal_login, name="universal_login"),
     path("change_password", views.change_password, name="change_password"),
+    path("delete_account", views.delete_me, name="delete_me"),
     path("update_profile", views.update_profile, name="update_profile"),
     path("profile_updated", views.profile_updated, name="profile_updated"),
     path("check_profile_on_login", views.check_profile_on_login, name="check_profile_on_login"),

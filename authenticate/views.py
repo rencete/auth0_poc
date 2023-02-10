@@ -84,6 +84,19 @@ def profile_updated(request):
 
 
 @login_required
+def delete_me(request):
+    userinfo = request.session['userinfo']
+    if not is_mfa(userinfo):
+        return redirect(request.build_absolute_uri(reverse("authenticate:require_step_up")))
+
+    return render(
+        request,
+        "authenticate/delete_me.html",
+        context={},
+    )
+
+
+@login_required
 def check_profile_on_login(request):
     userinfo = request.session['userinfo']
     # print(type(userinfo)) # type: dict

@@ -175,8 +175,10 @@ def basic_profile_update(request):
             "iss": settings.AUTH0_APP_NAME,
             "exp": exp,
             "state": state,
-            "aud": settings.AUTH0_DOMAIN, # Not in documentation but mandatory to be included. Value does not seem to be checked.
-            "iat": int(datetime.datetime.now().timestamp()), # Not in documentation but mandatory to be included
+            # Not in documentation but mandatory to be included. Value does not seem to be checked.
+            "aud": settings.AUTH0_DOMAIN,
+            # Not in documentation but mandatory to be included
+            "iat": int(datetime.datetime.now().timestamp()),
             # Add additional fields below
             "updated": datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")
         }
@@ -238,8 +240,10 @@ def check_security_answer(request):
             "iss": settings.AUTH0_APP_NAME,
             "exp": exp,
             "state": state,
-            "aud": settings.AUTH0_DOMAIN, # Not in documentation but mandatory to be included. Value does not seem to be checked.
-            "iat": int(datetime.datetime.now().timestamp()), # Not in documentation but mandatory to be included
+            # Not in documentation but mandatory to be included. Value does not seem to be checked.
+            "aud": settings.AUTH0_DOMAIN,
+            # Not in documentation but mandatory to be included
+            "iat": int(datetime.datetime.now().timestamp()),
             # Add additional fields below
             "answer_hash": hashed_answer,
             "attempts": num_attempts + 1,
@@ -264,3 +268,30 @@ def check_security_answer(request):
         )
     else:
         return redirect(request.build_absolute_uri(reverse("authenticate:answer_security_question")))
+
+
+def delete_user(request):
+    if request.method == 'POST':
+        get_token = GetToken(domain)
+        token = get_token.client_credentials(
+            client_id=client_id, client_secret=client_secret, audience=audience)
+        # print(token)
+        mgmt_api_token = token['access_token']
+        # print(mgmt_api_token)
+
+        user_id = request.session['userinfo'].get('sub')
+        # print(user_id)
+
+        users = Users(domain, mgmt_api_token)
+        response = users.delete(user_id)
+        # print(type(response))
+        # print(response)
+
+        # Logout the user
+        return redirect(
+            request.build_absolute_uri(reverse('auth0a:logout'))
+        )
+    else:
+        return redirect(
+            request.build_absolute_uri(reverse('authenticate:delete_me'))
+        )
